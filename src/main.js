@@ -544,111 +544,229 @@ function main() {
     263,
   ];
 
+  // Create a linked-list for storing the vertices data in the GPU realm
   var buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
   var indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-  // Vertex shader
+  // VERTEX SHADER
   var vertexShaderCode = `
-  attribute vec3 aPosition;   // Sebelumnya vec2, makanya tidak tergambar kubus :D
-  attribute vec3 aColor;
-  attribute vec3 aNormal;
-  uniform mat4 uModel;
-  uniform mat4 uView;
-  uniform mat4 uProjection;
-  varying vec3 vPosition;
-  varying vec3 vColor;
-  varying vec3 vNormal;
-  void main() {
-      gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
-      vColor = aColor;
-      vNormal = aNormal;
-      vPosition = (uModel * vec4(aPosition, 1.0)).xyz;
-  }
-  `;
-  var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vertexShaderObject, vertexShaderCode);
-  gl.compileShader(vertexShaderObject); // sampai sini sudah jadi .o
+       attribute vec3 aPosition;
+       attribute vec3 aColor;
+       attribute vec3 aNormal;
+       uniform mat4 uModel;
+       uniform mat4 uView;
+       uniform mat4 uProjection;
+       varying vec3 vPosition;
+       varying vec3 vColor;
+       varying vec3 vNormal;
+       void main () {
+           vec4 position = vec4(aPosition, 1.0);
+           gl_Position = uProjection * uView * uModel * position;
+           // gl_Position is the final destination for storing
+           //  positional data for the rendered vertex
+           vColor = aColor;
+           vNormal = aNormal;
+           vPosition = (uModel * position).xyz;
+       }
+   `;
+  var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertexShader, vertexShaderCode);
+  gl.compileShader(vertexShader);
 
-  // Fragment shader
+  // FRAGMENT SHADER
   var fragmentShaderCode = `
-  precision mediump float;
-  varying vec3 vColor;
-  uniform vec3 uLightConstant;        // merepresentasikan warna sumber cahaya
-  uniform float uAmbientIntensity;    // merepresentasikan intensitas cahaya sekitar
-  varying vec3 vNormal;
-  varying vec3 vPosition;             // titik fragmen
-  uniform vec3 uLightPosition;        // titik lokasi sumber cahaya
-  uniform vec3 uViewerPosition;       // titik lokasi mata atau kamera pengamat
-  uniform mat3 uNormalModel;
-  void main() {
-      vec3 ambient = uLightConstant * uAmbientIntensity;
-      vec3 lightRay = vPosition - uLightPosition;
-      vec3 normalizedLight = normalize(-lightRay);
-      vec3 normalizedNormal = normalize(uNormalModel * vNormal);
-      float cosTheta = dot(normalizedNormal, normalizedLight);
-      vec3 diffuse = vec3(0.0, 0.0, 0.0);
-      if (cosTheta > 0.0) {
-          float diffuseIntensity = cosTheta;
-          diffuse = uLightConstant * diffuseIntensity;
-      }
-      vec3 normalizedReflector = normalize(reflect(lightRay, normalizedNormal));
-      vec3 normalizedViewer = normalize(uViewerPosition - vPosition);
-      float cosPhi = dot(normalizedReflector, normalizedViewer);
-      vec3 specular = vec3(0.0, 0.0, 0.0);
-      if (cosPhi > 0.0) {
-          float shininessConstant = 100.0;    // batas minimum spesifikasi spekular untuk materi logam
-          float specularIntensity = pow(cosPhi, shininessConstant);
-          specular = uLightConstant * specularIntensity;
-      }
-      vec3 phong = ambient + diffuse + specular;
-      gl_FragColor = vec4(phong * vColor, 1.0);
-  }
-  `;
-  var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fragmentShaderObject, fragmentShaderCode);
-  gl.compileShader(fragmentShaderObject); // sampai sini sudah jadi .o
+       precision mediump float;
+       varying vec3 vColor;
+       uniform vec3 uLightConstant;      // It represents the light color
+       uniform float uAmbientIntensity;  // It represents the light intensity
+       varying vec3 vPosition;
+       varying vec3 vNormal;
+       uniform vec3 uLightPosition;
+       uniform vec3 uViewerPosition;
+       uniform mat3 uNormalModel;
+       void main() {
+           vec3 ambient = uLightConstant * uAmbientIntensity;
+           vec3 lightDirection = uLightPosition - vPosition;
+           vec3 normalizedLight = normalize(lightDirection);
+           vec3 normalizedNormal = normalize(uNormalModel * vNormal);
+           float cosTheta = dot(normalizedNormal, normalizedLight);
+           vec3 diffuse = vec3(0.0, 0.0, 0.0);
+           if (cosTheta > 0.0) {
+               float diffuseIntensity = cosTheta;
+               diffuse = uLightConstant * diffuseIntensity;
+           }
+           vec3 normalizedReflector = normalize(reflect(-lightDirection, normalizedNormal));
+           vec3 normalizedViewer = normalize(uViewerPosition - vPosition);
+           float cosPhi = dot(normalizedReflector, normalizedViewer);
+           vec3 specular = vec3(0., 0., 0.);
+           if (cosPhi > 0.) {
+               float shininessConstant = 100.0;    // bare minimum spec for metal
+               float specularIntensity = pow(cosPhi, shininessConstant);
+               specular = uLightConstant * specularIntensity;
+           }
+           vec3 phong = ambient + diffuse + specular;
+           gl_FragColor = vec4(phong * vColor, 1.0);
+           // gl_FragColor is the final destination for storing
+           //  color data for the rendered fragment
+       }
+   `;
+  var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragmentShader, fragmentShaderCode);
+  gl.compileShader(fragmentShader);
 
-  var shaderProgram = gl.createProgram(); // wadah dari executable (.exe)
-  gl.attachShader(shaderProgram, vertexShaderObject);
-  gl.attachShader(shaderProgram, fragmentShaderObject);
+  // Comparing to C-Programming, we may imagine
+  //  that up to this step we have created two
+  //  object files (.o), for the vertex and fragment shaders
+
+  var shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
   gl.linkProgram(shaderProgram);
   gl.useProgram(shaderProgram);
 
-  // Variabel lokal
+  // Local variables
+  var isAnimated = false;
   var theta = 0.0;
-  var freeze = false;
-  var horizontalSpeed = 0.0;
-  var verticalSpeed = 0.0;
-  var horizontalDelta = 0.0;
-  var verticalDelta = 0.0;
-
-  // Variabel pointer ke GLSL
+  var direction = "";
+  var dX = 0.0;
+  var dY = 0.0;
+  // For the model (all linear transformation)
   var uModel = gl.getUniformLocation(shaderProgram, "uModel");
-  // View
-  // var cameraX = 0.0;
-  // var cameraZ = 5.0;
-  var camera = [0.0, 0.0, 5.0];
+  // For the camera
+  var camera = [0.0, 0.0, 7.5];
   var uView = gl.getUniformLocation(shaderProgram, "uView");
-  var view = glMatrix.mat4.create();
-  glMatrix.mat4.lookAt(
-    view,
-    camera, // lokasi mata atau kamera pengamat
-    [camera[0], 0.0, -10.0], // titik ke mana kamera mengamat
-    [0.0, 1.0, 0.0]
-  );
-  // Projection
+  var view = glMatrix.mat4.create(); // Create an identity matrix
+  glMatrix.mat4.lookAt(view, camera, [camera[0], 0.0, -10.0], [0.0, 1.0, 0.0]);
+  gl.uniformMatrix4fv(uView, false, view);
+  // For the projection
   var uProjection = gl.getUniformLocation(shaderProgram, "uProjection");
   var perspective = glMatrix.mat4.create();
-  glMatrix.mat4.perspective(perspective, Math.PI / 3, 1.0, 0.5, 10.0);
+  glMatrix.mat4.perspective(
+    perspective,
+    Math.PI / 2 - 15, // 75 degrees
+    1.0,
+    0.5,
+    50.0
+  );
+  gl.uniformMatrix4fv(uProjection, false, perspective);
 
-  // Kita mengajari GPU bagaimana caranya mengoleksi
-  //  nilai posisi dari ARRAY_BUFFER
-  //  untuk setiap verteks yang sedang diproses
+  // For the lighting and shading
+  var uLightConstant = gl.getUniformLocation(shaderProgram, "uLightConstant");
+  // Ambient
+  var uAmbientIntensity = gl.getUniformLocation(shaderProgram, "uAmbientIntensity");
+  gl.uniform3fv(uLightConstant, [1.0, 1.0, 1.0]); // white color
+  gl.uniform1f(uAmbientIntensity, 0.455); // 40% intensity
+  // Diffuse
+  var uLightPosition = gl.getUniformLocation(shaderProgram, "uLightPosition");
+  gl.uniform3fv(uLightPosition, [1.0, 0.0, 1.0]);
+  var uNormalModel = gl.getUniformLocation(shaderProgram, "uNormalModel");
+  // Specular
+  var uViewerPosition = gl.getUniformLocation(shaderProgram, "uViewerPosition");
+
+  // Local functions
+  // MOUSE
+  var dragging,
+    prevx,
+    prevy,
+    rotation = glMatrix.mat4.create();
+  function onMouseDown(event) {
+    var x = event.clientX;
+    var y = event.clientY;
+    var rect = event.target.getBoundingClientRect();
+    if (rect.left <= x && rect.right >= x && rect.top <= y && rect.bottom >= y) {
+      dragging = true;
+      prevx = x;
+      prevy = y;
+    }
+  }
+  function onMouseUp(event) {
+    dragging = false;
+  }
+  function onMouseMove(event) {
+    if (dragging) {
+      var x = event.clientX;
+      var y = event.clientY;
+      var xdiff = x - prevx;
+      var ydiff = y - prevy;
+      var inverseRotation = glMatrix.mat4.create();
+      glMatrix.mat4.invert(inverseRotation, rotation);
+      var xAxis = [1, 0, 0, 0];
+      var yAxis = [0, 1, 0, 0];
+      glMatrix.vec4.transformMat4(xAxis, xAxis, inverseRotation);
+      glMatrix.vec4.transformMat4(yAxis, yAxis, inverseRotation);
+      glMatrix.mat4.rotate(rotation, rotation, glMatrix.glMatrix.toRadian(xdiff), yAxis);
+      glMatrix.mat4.rotate(rotation, rotation, glMatrix.glMatrix.toRadian(ydiff), xAxis);
+      prevx = x;
+      prevy = y;
+    }
+  }
+  document.addEventListener("mousedown", onMouseDown);
+  document.addEventListener("mouseup", onMouseUp);
+  document.addEventListener("mousemove", onMouseMove);
+  // KEYBOARD
+  function onKeyDown(event) {
+    switch (event.keyCode) {
+      case 73: // Object UP
+        direction = "up";
+        break;
+      case 75: // Object DOWN
+        direction = "down";
+        break;
+      case 74: // Object RIGHT
+        direction = "right";
+        break;
+      case 76: // Object LEFT
+        direction = "left";
+        break;
+      case 38: // Camera UP
+        camera[1] += 0.05;
+        gl.uniform3fv(uViewerPosition, camera);
+        glMatrix.mat4.lookAt(view, camera, [camera[0], 0.0, -10.0], [0.0, 1.0, 0.0]);
+        gl.uniformMatrix4fv(uView, false, view);
+        break;
+      case 40: // Camera DOWN
+        camera[1] -= 0.05;
+        gl.uniform3fv(uViewerPosition, camera);
+        glMatrix.mat4.lookAt(view, camera, [camera[0], 0.0, -10.0], [0.0, 1.0, 0.0]);
+        gl.uniformMatrix4fv(uView, false, view);
+        break;
+      case 39: // Camera RIGHT
+        camera[0] += 0.05;
+        gl.uniform3fv(uViewerPosition, camera);
+        glMatrix.mat4.lookAt(view, camera, [camera[0], 0.0, -10.0], [0.0, 1.0, 0.0]);
+        gl.uniformMatrix4fv(uView, false, view);
+        break;
+      case 37: // Camera LEFT
+        camera[0] -= 0.05;
+        gl.uniform3fv(uViewerPosition, camera);
+        glMatrix.mat4.lookAt(view, camera, [camera[0], 0.0, -10.0], [0.0, 1.0, 0.0]);
+        gl.uniformMatrix4fv(uView, false, view);
+        break;
+      default:
+        break;
+    }
+  }
+  function onKeyUp(event) {
+    direction = "";
+  }
+  function onKeyPress(event) {
+    console.log("keypress");
+    if (event.keyCode == 32) {
+      // Space button
+      isAnimated = !isAnimated;
+    }
+  }
+  document.addEventListener("keypress", onKeyPress);
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keyup", onKeyUp);
+
+  // Teach the GPU how to collect
+  //  the positional values from ARRAY_BUFFER
+  //  for each vertex being processed
   var aPosition = gl.getAttribLocation(shaderProgram, "aPosition");
   gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 0);
   gl.enableVertexAttribArray(aPosition);
@@ -659,93 +777,42 @@ function main() {
   gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
   gl.enableVertexAttribArray(aNormal);
 
-  // Untuk pencahayaan dan pembayangan
-  var uLightConstant = gl.getUniformLocation(shaderProgram, "uLightConstant");
-  var uAmbientIntensity = gl.getUniformLocation(shaderProgram, "uAmbientIntensity");
-  gl.uniform3fv(uLightConstant, [1.0, 1.0, 1.0]); // warna sumber cahaya: oranye
-  gl.uniform1f(uAmbientIntensity, 0.4); // intensitas cahaya: 40%
-  var uLightPosition = gl.getUniformLocation(shaderProgram, "uLightPosition");
-  gl.uniform3fv(uLightPosition, [2.0, 0.0, 0.0]);
-  var uNormalModel = gl.getUniformLocation(shaderProgram, "uNormalModel");
-  var uViewerPosition = gl.getUniformLocation(shaderProgram, "uViewerPosition");
-  gl.uniform3fv(uViewerPosition, camera);
-
-  // Grafika interaktif
-  // Tetikus
-  function onMouseClick(event) {
-    freeze = !freeze;
-  }
-  document.addEventListener("click", onMouseClick);
-  // Papan ketuk
-  function onKeydown(event) {
-    // Gerakan horizontal: a ke kiri, d ke kanan
-    if (event.keyCode == 65) {
-      // a
-      horizontalSpeed = -0.01;
-    } else if (event.keyCode == 68) {
-      // d
-      horizontalSpeed = 0.01;
-    }
-    // Gerakan vertikal: w ke atas, s ke bawah
-    if (event.keyCode == 87) {
-      // w
-      verticalSpeed = -0.01;
-    } else if (event.keyCode == 83) {
-      // s
-      verticalSpeed = 0.01;
-    }
-    // Pergerakan kamera berdasarkan panah pada papan ketuk
-    // Horizontal
-    if (event.keyCode == 37) {
-      // kiri
-      camera[0] -= 0.1;
-    } else if (event.keyCode == 39) {
-      // kanan
-      camera[0] += 0.1;
-    }
-    // Vertikal
-    if (event.keyCode == 38) {
-      // atas
-      camera[1] -= 0.1;
-    } else if (event.keyCode == 40) {
-      // bawah
-      camera[1] += 0.1;
-    }
-    gl.uniform3fv(uViewerPosition, camera);
-    glMatrix.mat4.lookAt(view, camera, [camera[0], camera[1], -10.0], [0.0, 1.0, 0.0]);
-  }
-  function onKeyup(event) {
-    if (event.keyCode == 65 || event.keyCode == 68) horizontalSpeed = 0.0;
-    if (event.keyCode == 87 || event.keyCode == 83) verticalSpeed = 0.0;
-  }
-  function onKeypress(event) {
-    if (event.keyCode == 32) freeze = !freeze;
-  }
-  document.addEventListener("keydown", onKeydown);
-  document.addEventListener("keyup", onKeyup);
-  document.addEventListener("keypress", onKeypress);
-
   function render() {
     gl.enable(gl.DEPTH_TEST);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Hitam
-    //            Merah     Hijau   Biru    Transparansi
+    gl.clearColor(0.12, 0.54, 0.56, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (!freeze) {
+    var model = glMatrix.mat4.create();
+    if (isAnimated) {
       theta += 0.01;
     }
-    horizontalDelta += horizontalSpeed;
-    verticalDelta -= verticalSpeed;
-    var model = glMatrix.mat4.create(); // Membuat matriks identitas
-    glMatrix.mat4.translate(model, model, [horizontalDelta, verticalDelta, 0.0]);
-    glMatrix.mat4.rotateX(model, model, theta);
-    glMatrix.mat4.rotateY(model, model, theta);
-    glMatrix.mat4.rotateZ(model, model, theta);
+    switch (direction) {
+      case "up":
+        dY += 0.1;
+        break;
+      case "down":
+        dY -= 0.1;
+        break;
+      case "left":
+        dX -= 0.1;
+        break;
+      case "right":
+        dX += 0.1;
+        break;
+
+      default:
+        break;
+    }
+    glMatrix.mat4.translate(model, model, [dX, dY, 0.0]);
+    glMatrix.mat4.rotateZ(rotation, rotation, theta);
+    glMatrix.mat4.rotateY(rotation, rotation, theta);
+    glMatrix.mat4.multiply(model, model, rotation);
     gl.uniformMatrix4fv(uModel, false, model);
-    gl.uniformMatrix4fv(uView, false, view);
-    gl.uniformMatrix4fv(uProjection, false, perspective);
+
+    // For transforming the normal vector
     var normalModel = glMatrix.mat3.create();
     glMatrix.mat3.normalFromMat4(normalModel, model);
     gl.uniformMatrix3fv(uNormalModel, false, normalModel);
+
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     requestAnimationFrame(render);
   }
