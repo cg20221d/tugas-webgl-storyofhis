@@ -1,641 +1,141 @@
-// import { vertices, indices } from "./vertices";
-
 function main() {
-  let canvas = document.getElementById("canvasz");
-  let gl = canvas.getContext("webgl");
+  var kanvas = document.getElementById("kanvas");
+  var gl = kanvas.getContext("webgl");
 
-  let vertices = [
-    // I
-    // Face A       // Red
-    -2,
-    -1.8,
-    -1,
-    1,
-    0,
-    0, // Index:  0
-    -1,
-    -1.8,
-    -1,
-    1,
-    0,
-    0, // Index:  1
-    -1,
-    -1.3,
-    -1,
-    1,
-    0,
-    0, // Index:  2
-    -2,
-    -1.3,
-    -1,
-    1,
-    0,
-    0, // Index:  3
-    // Face B       // Yellow
-    -2,
-    -1.8,
-    1,
-    1,
-    1,
-    0, // Index:  4
-    -1,
-    -1.8,
-    1,
-    1,
-    1,
-    0, // Index:  5
-    -1,
-    -1.3,
-    1,
-    1,
-    1,
-    0, // Index:  6
-    -2,
-    -1.3,
-    1,
-    1,
-    1,
-    0, // Index:  7
-    // Face C       // Green
-    -2,
-    -1.8,
-    -1,
-    0,
-    1,
-    0, // Index:  8
-    -2,
-    -1.3,
-    -1,
-    0,
-    1,
-    0, // Index:  9
-    -2,
-    -1.3,
-    1,
-    0,
-    1,
-    0, // Index: 10
-    -2,
-    -1.8,
-    1,
-    0,
-    1,
-    0, // Index: 11
-    // Face D       // Blue
-    -1,
-    -1.8,
-    -1,
-    0,
-    0,
-    1, // Index: 12
-    -1,
-    -1.3,
-    -1,
-    0,
-    0,
-    1, // Index: 13
-    -1,
-    -1.3,
-    1,
-    0,
-    0,
-    1, // Index: 14
-    -1,
-    -1.8,
-    1,
-    0,
-    0,
-    1, // Index: 15
-    // Face E       // Orange
-    -2,
-    -1.8,
-    -1,
-    1,
-    0.5,
-    0, // Index: 16
-    -2,
-    -1.8,
-    1,
-    1,
-    0.5,
-    0, // Index: 17
-    -1,
-    -1.8,
-    1,
-    1,
-    0.5,
-    0, // Index: 18
-    -1,
-    -1.8,
-    -1,
-    1,
-    0.5,
-    0, // Index: 19
-    // Face F       // White
-    -2,
-    -1.3,
-    -1,
-    1,
-    1,
-    1, // Index: 20
-    -2,
-    -1.3,
-    1,
-    1,
-    1,
-    1, // Index: 21
-    -1,
-    -1.3,
-    1,
-    1,
-    1,
-    1, // Index: 22
-    -1,
-    -1.3,
-    -1,
-    1,
-    1,
-    1 - // Index: 23
-      // z
-      //  Faces A
-      -1,
-    1,
-    -1,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    -1,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    // Faces B
-    -1,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces C
-    -2,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    // Faces D
-    -1,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -1,
-    1,
-    0,
-    0,
-    // Faces E
-    -2,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces F
-    -1,
-    -0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    -1,
-    1,
-    0,
-    0,
-    // Faces G
-    -2,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    // Faces H
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces I
-    -1,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces J
-    -2,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces K
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    -2,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces L
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    -0.5,
-    1,
-    0,
-    0,
-    -1,
-    0.5,
-    -0.5,
-    1,
-    0,
-    0,
-    // Faces M
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    0,
-    0.5,
-    1,
-    0,
-    0,
-    // Faces N
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    0.5,
-    1,
-    0,
-    0,
-    // Faces O
-    -1,
-    1,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    // Faces P
-    -1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    1,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    // Faces Q
-    -2,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    // Faces R
-    -1,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    -1,
-    1,
-    0.5,
-    1,
-    0,
-    0,
-    -1,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    // Faces S
-    -2,
-    1,
-    1,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    1,
-    1,
-    0,
-    0,
-    -2,
-    -0.5,
-    0.5,
-    1,
-    0,
-    0,
-    -2,
-    1,
-    0.5,
-    1,
-    0,
-    0,
+  var vertices = [
+    4.5, 1, -2, 1, 0, 0, 0, 0, -1, 5, 1, -2, 1, 0, 0, 0, 0, -1, 5, 1.5, -2, 1, 0, 0, 0, 0, -1, 4.5, 1.5, -2, 1, 0, 0, 0, 0, -1,
+
+    4.5, 1.5, 2, 1, 1, 0, 0, 0, 1, 5, 1.5, 2, 1, 1, 0, 0, 0, 1, 5, 1.5, -2, 1, 1, 0, 0, 0, 1, 4.5, 1.5, -2, 1, 1, 0, 0, 0, 1,
+
+    4.5, 1, 2, 0, 1, 0, -1, 0, 0, 4.5, 1.5, 2, 0, 1, 0, -1, 0, 0, 4.5, 1.5, -2, 0, 1, 0, -1, 0, 0, 4.5, 1, -2, 0, 1, 0, -1, 0, 0,
+
+    5, 1, 2, 0, 0, 1, 1, 0, 0, 4.5, 1, 2, 0, 0, 1, 1, 0, 0, 4.5, 1, -2, 0, 0, 1, 1, 0, 0, 5, 1, -2, 0, 0, 1, 1, 0, 0,
+
+    5, 1.5, 2, 1, 0.5, 0, 0, -1, 0, 5, 1, 2, 1, 0.5, 0, 0, -1, 0, 5, 1, -2, 1, 0.5, 0, 0, -1, 0, 5, 1.5, -2, 1, 0.5, 0, 0, -1, 0,
+
+    4.5, 1, 2, 1, 1, 1, 0, 1, 0, 5, 1, 2, 1, 1, 1, 0, 1, 0, 5, 1.5, 2, 1, 1, 1, 0, 1, 0, 4.5, 1.5, 2, 1, 1, 1, 0, 1, 0,
+
+    2.5, 1, -2, 1, 0, 0, 0, 0, -1, 4, 1, -2, 1, 0, 0, 0, 0, -1, 4, 1.5, -2, 1, 0, 0, 0, 0, -1, 2.5, 1.5, -2, 1, 0, 0, 0, 0, -1,
+
+    2.5, 1.5, -1.5, 1, 1, 0, 0, 0, 1, 4, 1.5, -1.5, 1, 1, 0, 0, 0, 1, 4, 1.5, -2, 1, 1, 0, 0, 0, 1, 2.5, 1.5, -2, 1, 1, 0, 0, 0, 1,
+
+    2.5, 1, -1.5, 0, 1, 0, -1, 0, 0, 2.5, 1.5, -1.5, 0, 1, 0, -1, 0, 0, 2.5, 1.5, -2, 0, 1, 0, -1, 0, 0, 2.5, 1, -2, 0, 1, 0, -1, 0, 0,
+
+    2.5, 1, -1.5, 0, 0, 1, 1, 0, 0, 4, 1, -1.5, 0, 0, 1, 1, 0, 0, 4, 1, -2, 0, 0, 1, 1, 0, 0, 2.5, 1, -2, 0, 0, 1, 1, 0, 0,
+
+    4, 1, -1.5, 1, 0.5, 0, 0, -1, 0, 4, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0, 4, 1.5, -2, 1, 0.5, 0, 0, -1, 0, 4, 1, -2, 1, 0.5, 0, 0, -1, 0,
+
+    2.5, 1, -1.5, 1, 1, 1, 0, 1, 0, 4, 1, -1.5, 1, 1, 1, 0, 1, 0, 4, 1.5, -1.5, 1, 1, 1, 0, 1, 0, 2.5, 1.5, -1.5, 1, 1, 1, 0, 1, 0,
+
+    3.5, 1, -1.5, 1, 1, 1, 0, 1, 0, 4, 1, -1.5, 1, 1, 1, 0, 1, 0, 4, 1.5, -1.5, 1, 1, 1, 0, 1, 0, 3.5, 1.5, -1.5, 1, 1, 1, 0, 1, 0,
+
+    2.5, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, 3, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, 4, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0, 3.5, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0,
+
+    2.5, 1, 1.5, 0, 0, 1, 1, 0, 0, 2.5, 1.5, 1.5, 0, 0, 1, 1, 0, 0, 3.5, 1.5, -1.5, 0, 0, 1, 1, 0, 0, 3.5, 1, -1.5, 0, 0, 1, 1, 0, 0,
+
+    3, 1, 1.5, 0, 1, 0, -1, 0, 0, 2.5, 1, 1.5, 0, 1, 0, -1, 0, 0, 3.5, 1, -1.5, 0, 1, 0, -1, 0, 0, 4, 1, -1.5, 0, 1, 0, -1, 0, 0,
+
+    3, 1.5, 1.5, 1, 1, 0, 0, 0, 1, 3, 1, 1.5, 1, 1, 0, 0, 0, 1, 4, 1, -1.5, 1, 1, 0, 0, 0, 1, 4, 1.5, -1.5, 1, 1, 0, 0, 0, 1,
+
+    2.5, 1, 1.5, 1, 0, 0, 0, 0, -1, 3, 1, 1.5, 1, 0, 0, 0, 0, -1, 3, 1.5, 1.5, 1, 0, 0, 0, 0, -1, 2.5, 1.5, 1.5, 1, 0, 0, 0, 0, -1,
+
+    2.5, 1, 2, 1, 0, 0, 0, 0, -1, 4, 1, 2, 1, 0, 0, 0, 0, -1, 4, 1.5, 2, 1, 0, 0, 0, 0, -1, 2.5, 1.5, 2, 1, 0, 0, 0, 0, -1,
+
+    4, 1.5, 2, 1, 1, 0, 0, 0, 1, 2.5, 1.5, 2, 1, 1, 0, 0, 0, 1, 2.5, 1.5, 1.5, 1, 1, 0, 0, 0, 1, 4, 1.5, 1.5, 1, 1, 0, 0, 0, 1,
+
+    2.5, 1, 2, 0, 1, 0, -1, 0, 0, 2.5, 1.5, 2, 0, 1, 0, -1, 0, 0, 2.5, 1.5, 1.5, 0, 1, 0, -1, 0, 0, 2.5, 1, 1.5, 0, 1, 0, -1, 0, 0,
+
+    2.5, 1, 2, 0, 0, 1, 1, 0, 0, 4, 1, 2, 0, 0, 1, 1, 0, 0, 4, 1, 1.5, 0, 0, 1, 1, 0, 0, 2.5, 1, 1.5, 0, 0, 1, 1, 0, 0,
+
+    4, 1.5, 2, 1, 0.5, 0, 0, -1, 0, 4, 1, 2, 1, 0.5, 0, 0, -1, 0, 4, 1, 1.5, 1, 0.5, 0, 0, -1, 0, 4, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0,
+
+    2.5, 1, 1.5, 1, 1, 1, 0, 1, 0, 4, 1, 1.5, 1, 1, 1, 0, 1, 0, 4, 1.5, 1.5, 1, 1, 1, 0, 1, 0, 2.5, 1.5, 1.5, 1, 1, 1, 0, 1, 0,
+
+    0.5, 1, -2, 1, 0, 0, 0, 0, -1, 1, 1, -2, 1, 0, 0, 0, 0, -1, 1, 1.5, -2, 1, 0, 0, 0, 0, -1, 0.5, 1.5, -2, 1, 0, 0, 0, 0, -1,
+
+    0.5, 1.5, 2, 1, 1, 0, 0, 0, 1, 1, 1.5, 2, 1, 1, 0, 0, 0, 1, 1, 1.5, -2, 1, 1, 0, 0, 0, 1, 0.5, 1.5, -2, 1, 1, 0, 0, 0, 1,
+
+    0.5, 1, 2, 0, 1, 0, -1, 0, 0, 0.5, 1.5, 2, 0, 1, 0, -1, 0, 0, 0.5, 1.5, -2, 0, 1, 0, -1, 0, 0, 0.5, 1, -2, 0, 1, 0, -1, 0, 0,
+
+    1, 1, 2, 0, 0, 1, 1, 0, 0, 0.5, 1, 2, 0, 0, 1, 1, 0, 0, 0.5, 1, -2, 0, 0, 1, 1, 0, 0, 1, 1, -2, 0, 0, 1, 1, 0, 0,
+
+    1, 1.5, 2, 1, 0.5, 0, 0, -1, 0, 1, 1, 2, 1, 0.5, 0, 0, -1, 0, 1, 1, -2, 1, 0.5, 0, 0, -1, 0, 1, 1.5, -2, 1, 0.5, 0, 0, -1, 0,
+
+    0.5, 1, 2, 1, 1, 1, 0, 1, 0, 1, 1, 2, 1, 1, 1, 0, 1, 0, 1, 1.5, 2, 1, 1, 1, 0, 1, 0, 0.5, 1.5, 2, 1, 1, 1, 0, 1, 0,
+
+    1, 1, 1, 1, 1, 1, 0, 1, 0, 1.5, 1, 1, 1, 1, 1, 0, 1, 0, 1.5, 1.5, 1, 1, 1, 1, 0, 1, 0, 1, 1.5, 1, 1, 1, 1, 0, 1, 0,
+
+    1, 1.5, 1, 1, 0.5, 0, 0, -1, 0, 1.5, 1.5, 1, 1, 0.5, 0, 0, -1, 0, 1.5, 1.5, 0.5, 1, 0.5, 0, 0, -1, 0, 1, 1.5, 0.5, 1, 0.5, 0, 0, -1, 0,
+
+    1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1.5, 1, 0, 0, 1, 1, 0, 0, 1, 1.5, 0.5, 0, 0, 1, 1, 0, 0, 1, 1, 0.5, 0, 0, 1, 1, 0, 0,
+
+    1.5, 1, 1, 0, 1, 0, -1, 0, 0, 1, 1, 1, 0, 1, 0, -1, 0, 0, 1, 1, 0.5, 0, 1, 0, -1, 0, 0, 1.5, 1, 0.5, 0, 1, 0, -1, 0, 0,
+
+    1.5, 1.5, 1, 1, 1, 0, 0, 0, 1, 1.5, 1, 1, 1, 1, 0, 0, 0, 1, 1.5, 1, 0.5, 1, 1, 0, 0, 0, 1, 1.5, 1.5, 0.5, 1, 1, 0, 0, 0, 1,
+
+    1, 1, 0.5, 1, 0, 0, 0, 0, -1, 1.5, 1, 0.5, 1, 0, 0, 0, 0, -1, 1.5, 1.5, 0.5, 1, 0, 0, 0, 0, -1, 1, 1.5, 0.5, 1, 0, 0, 0, 0, -1,
+
+    1.5, 1, 0.5, 1, 0, 0, 0, 0, -1, 2, 1, 0.5, 1, 0, 0, 0, 0, -1, 2, 1.5, 0.5, 1, 0, 0, 0, 0, -1, 1.5, 1.5, 0.5, 1, 0, 0, 0, 0, -1,
+
+    1.5, 1.5, 2, 1, 1, 0, 0, 0, 1, 2, 1.5, 2, 1, 1, 0, 0, 0, 1, 2, 1.5, 0.5, 1, 1, 0, 0, 0, 1, 1.5, 1.5, 0.5, 1, 1, 0, 0, 0, 1,
+
+    1.5, 1, 2, 0, 1, 0, -1, 0, 0, 1, 5, 1.5, 2, 0, 1, 0, -1, 0, 0, 1.5, 1.5, 0.5, 0, 1, 0, -1, 0, 0, 1.5, 1, 0.5, 0, 1, 0, -1, 0, 0,
+
+    2, 1, 2, 0, 0, 1, 1, 0, 0, 1.5, 1, 2, 0, 0, 1, 1, 0, 0, 1.5, 1, 0.5, 0, 0, 1, 1, 0, 0, 2, 1, 0.5, 0, 0, 1, 1, 0, 0,
+
+    2, 1.5, 2, 1, 0.5, 0, 0, -1, 0, 2, 1, 2, 1, 0.5, 0, 0, -1, 0, 2, 1, 0.5, 1, 0.5, 0, 0, -1, 0, 2, 1.5, 0.5, 1, 0.5, 0, 0, -1, 0,
+
+    1.5, 1, 2, 1, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 1, 0, 1, 0, 2, 1.5, 2, 1, 1, 1, 0, 1, 0, 1.5, 1.5, 2, 1, 1, 1, 0, 1, 0,
+
+    -1.5, 1, -2, 1, 0, 0, 0, 0, -1, 0, 1, -2, 1, 0, 0, 0, 0, -1, 0, 1.5, -2, 1, 0, 0, 0, 0, -1, -1.5, 1.5, -2, 1, 0, 0, 0, 0, -1,
+
+    -1.5, 1.5, -1.5, 1, 1, 0, 0, 0, 1, 0, 1.5, -1.5, 1, 1, 0, 0, 0, 1, 0, 1.5, -2, 1, 1, 0, 0, 0, 1, -1.5, 1.5, -2, 1, 1, 0, 0, 0, 1,
+
+    -1.5, 1, -1.5, 0, 1, 0, -1, 0, 0, -1.5, 1.5, -1.5, 0, 1, 0, -1, 0, 0, -1.5, 1.5, -2, 0, 1, 0, -1, 0, 0, -1.5, 1, -2, 0, 1, 0, -1, 0, 0,
+
+    -1.5, 1, -1.5, 0, 0, 1, 1, 0, 0, 0, 1, -1.5, 0, 0, 1, 1, 0, 0, 0, 1, -2, 0, 0, 1, 1, 0, 0, -1.5, 1, -2, 0, 0, 1, 1, 0, 0,
+
+    0, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0, 0, 1, -1.5, 1, 0.5, 0, 0, -1, 0, 0, 1, -2, 1, 0.5, 0, 0, -1, 0, 0, 1.5, -2, 1, 0.5, 0, 0, -1, 0,
+
+    -1.5, 1.5, -1.5, 1, 1, 1, 0, 1, 0, -1.5, 1, -1.5, 1, 1, 1, 0, 1, 0, 0, 1, -1.5, 1, 1, 1, 0, 1, 0, 0, 1.5, -1.5, 1, 1, 1, 0, 1, 0,
+
+    -0.5, 1, -1.5, 1, 1, 1, 0, 1, 0, 0, 1, -1.5, 1, 1, 1, 0, 1, 0, 0, 1.5, -1.5, 1, 1, 1, 0, 1, 0, -0.5, 1.5, -1.5, 1, 1, 1, 0, 1, 0,
+
+    -0.5, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, 0, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, 0, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0, -0.5, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0,
+
+    -0.5, 1, 1.5, 0, 0, 1, 1, 0, 0, -0.5, 1.5, 1.5, 0, 0, 1, 1, 0, 0, -0.5, 1.5, -1.5, 0, 0, 1, 1, 0, 0, -0.5, 1, -1.5, 0, 0, 1, 1, 0, 0,
+
+    0, 1, 1.5, 0, 1, 0, -1, 0, 0, -0.5, 1, 1.5, 0, 1, 0, -1, 0, 0, -0.5, 1, -1.5, 0, 1, 0, -1, 0, 0, 0, 1, -1.5, 0, 1, 0, -1, 0, 0,
+
+    0, 1.5, 1.5, 1, 1, 0, 0, 0, 1, 0, 1, 1.5, 1, 1, 0, 0, 0, 1, 0, 1, -1.5, 1, 1, 0, 0, 0, 1, 0, 1.5, -1.5, 1, 1, 0, 0, 0, 1,
+
+    -0.5, 1, 1.5, 1, 0, 0, 0, 0, -1, 0, 1, 1.5, 1, 0, 0, 0, 0, -1, 0, 1.5, 1.5, 1, 0, 0, 0, 0, -1, -0.5, 1.5, 1.5, 1, 0, 0, 0, 0, -1,
+
+    -1.5, 1, -1.5, 1, 1, 1, 0, 1, 0, -1, 1, -1.5, 1, 1, 1, 0, 1, 0, -1, 1.5, -1.5, 1, 1, 1, 0, 1, 0, -1.5, 1.5, -1.5, 1, 1, 1, 0, 1, 0,
+
+    -1.5, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, -1, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0, -1, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0, -1.5, 1.5, -1.5, 1, 0.5, 0, 0, -1, 0,
+
+    -1.5, 1, 1.5, 0, 0, 1, 1, 0, 0, -1.5, 1.5, 1.5, 0, 0, 1, 1, 0, 0, -1.5, 1.5, -1.5, 0, 0, 1, 1, 0, 0, -1.5, 1, -1.5, 0, 0, 1, 1, 0, 0,
+
+    -1, 1, 1.5, 0, 1, 0, -1, 0, 0, -1.5, 1, 1.5, 0, 1, 0, -1, 0, 0, -1.5, 1, -1.5, 0, 1, 0, -1, 0, 0, -1, 1, -1.5, 0, 1, 0, -1, 0, 0,
+
+    -1, 1.5, 1.5, 1, 1, 0, 0, 0, 1, -1, 1, 1.5, 1, 1, 0, 0, 0, 1, -1, 1, -1.5, 1, 1, 0, 0, 0, 1, -1, 1.5, -1.5, 1, 1, 0, 0, 0, 1,
+
+    -1.5, 1, 1.5, 1, 0, 0, 0, 0, -1, -1, 1, 1.5, 1, 0, 0, 0, 0, -1, -1, 1.5, 1.5, 1, 0, 0, 0, 0, -1, -1.5, 1.5, 1.5, 1, 0, 0, 0, 0, -1,
+
+    -1.5, 1, 1.5, 1, 0, 0, 0, 0, -1, 0, 1, 1.5, 1, 0, 0, 0, 0, -1, 0, 1.5, 1.5, 1, 0, 0, 0, 0, -1, -1.5, 1.5, 1.5, 1, 0, 0, 0, 0, -1,
+
+    -1.5, 1.5, 2, 1, 1, 0, 0, 0, 1, 0, 1.5, 2, 1, 1, 0, 0, 0, 1, 0, 1.5, 1.5, 1, 1, 0, 0, 0, 1, -1.5, 1.5, 1.5, 1, 1, 0, 0, 0, 1,
+
+    -1.5, 1, 2, 0, 1, 0, -1, 0, 0, -1.5, 1.5, 2, 0, 1, 0, -1, 0, 0, -1.5, 1.5, 1.5, 0, 1, 0, -1, 0, 0, -1.5, 1, 1.5, 0, 1, 0, -1, 0, 0,
+
+    0, 1, 2, 0, 0, 1, 1, 0, 0, -1.5, 1, 2, 0, 0, 1, 1, 0, 0, -1.5, 1, 1.5, 0, 0, 1, 1, 0, 0, 0, 1, 1.5, 0, 0, 1, 1, 0, 0,
+
+    0, 1.5, 2, 1, 0.5, 0, 0, -1, 0, 0, 1, 2, 1, 0.5, 0, 0, -1, 0, 0, 1, 1.5, 1, 0.5, 0, 0, -1, 0, 0, 1.5, 1.5, 1, 0.5, 0, 0, -1, 0,
+
+    -1.5, 1, 2, 1, 1, 1, 0, 1, 0, 0, 1, 2, 1, 1, 1, 0, 1, 0, 0, 1.5, 2, 1, 1, 1, 0, 1, 0, -1.5, 1.5, 2, 1, 1, 1, 0, 1, 0,
   ];
-
   var indices = [
-    // I
     0,
     1,
     2,
@@ -714,79 +214,334 @@ function main() {
     50,
     48,
     50,
-    51, // Face G
+    51, // Face A1
     52,
     53,
     54,
     52,
     54,
-    55, // Face H
+    55, // Face B1
     56,
     57,
     58,
     56,
     58,
-    59, // Face I
+    59, // Face C1
     60,
     61,
     62,
     60,
     62,
-    63, // Face J
+    63, // Face D1
     64,
     65,
     66,
     64,
     66,
-    67, // Face K
+    67, // Face E1
     68,
     69,
     70,
     68,
     70,
-    71, // Face L
+    71, // Face F1
+
     72,
     73,
     74,
     72,
     74,
-    75, // Face M
+    75, // Face A2
     76,
     77,
     78,
     76,
     78,
-    79, // Face N
+    79, // Face B2
     80,
     81,
     82,
     80,
     82,
-    83, // Face O
+    83, // Face C2
     84,
     85,
     86,
     84,
     86,
-    87, // Face P
+    87, // Face D2
     88,
     89,
     90,
     88,
     90,
-    91, // Face Q
+    91, // Face E2
     92,
     93,
     94,
     92,
     94,
-    95, // Face R
+    95, // Face F2
+
     96,
     97,
     98,
     96,
     98,
-    99, // Face S
+    99, // Face A
+    100,
+    101,
+    102,
+    100,
+    102,
+    103, // Face B
+    104,
+    105,
+    106,
+    104,
+    106,
+    107, // Face C
+    108,
+    109,
+    110,
+    108,
+    110,
+    111, // Face D
+    112,
+    113,
+    114,
+    112,
+    114,
+    115, // Face E
+    116,
+    117,
+    118,
+    116,
+    118,
+    119, // Face F
+
+    120,
+    121,
+    122,
+    120,
+    122,
+    123, // Face A1
+    124,
+    125,
+    126,
+    124,
+    126,
+    127, // Face B1
+    128,
+    129,
+    130,
+    128,
+    130,
+    131, // Face C1
+    132,
+    133,
+    134,
+    132,
+    134,
+    135, // Face D1
+    136,
+    137,
+    138,
+    136,
+    138,
+    139, // Face E1
+    140,
+    141,
+    142,
+    140,
+    142,
+    143, // Face F1
+
+    144,
+    145,
+    146,
+    144,
+    146,
+    147, // Face A2
+    148,
+    149,
+    150,
+    148,
+    150,
+    151, // Face B2
+    152,
+    153,
+    154,
+    152,
+    154,
+    155, // Face C2
+    156,
+    157,
+    158,
+    156,
+    158,
+    159, // Face D2
+    160,
+    161,
+    162,
+    160,
+    162,
+    163, // Face E2
+    164,
+    165,
+    166,
+    164,
+    166,
+    167, // Face F2
+
+    // O
+    168,
+    169,
+    170,
+    168,
+    170,
+    171, // A
+    172,
+    173,
+    174,
+    172,
+    174,
+    175, // B
+    176,
+    177,
+    178,
+    176,
+    178,
+    179, // C
+    180,
+    181,
+    182,
+    180,
+    182,
+    183, // D
+    184,
+    185,
+    186,
+    184,
+    186,
+    187, // E
+    188,
+    189,
+    190,
+    188,
+    190,
+    191, // F
+
+    192,
+    193,
+    194,
+    192,
+    194,
+    195,
+    196,
+    197,
+    198,
+    196,
+    198,
+    199,
+    200,
+    201,
+    202,
+    200,
+    202,
+    203,
+    204,
+    205,
+    206,
+    204,
+    206,
+    207,
+    208,
+    209,
+    210,
+    208,
+    210,
+    211,
+    212,
+    213,
+    214,
+    212,
+    214,
+    215,
+
+    216,
+    217,
+    218,
+    216,
+    218,
+    219,
+    220,
+    221,
+    222,
+    220,
+    222,
+    223,
+    224,
+    225,
+    226,
+    224,
+    226,
+    227,
+    228,
+    229,
+    230,
+    228,
+    230,
+    231,
+    232,
+    233,
+    234,
+    232,
+    234,
+    235,
+    236,
+    237,
+    238,
+    236,
+    238,
+    239,
+
+    240,
+    241,
+    242,
+    240,
+    242,
+    243,
+    244,
+    245,
+    246,
+    244,
+    246,
+    247,
+    248,
+    249,
+    250,
+    248,
+    250,
+    251,
+    252,
+    253,
+    254,
+    252,
+    254,
+    255,
+    256,
+    257,
+    258,
+    256,
+    258,
+    259,
+    260,
+    261,
+    262,
+    260,
+    262,
+    263,
   ];
 
   var buffer = gl.createBuffer();
@@ -799,29 +554,61 @@ function main() {
 
   // Vertex shader
   var vertexShaderCode = `
-    attribute vec3 aPosition;   // Sebelumnya vec2, makanya tidak tergambar kubus :D
-    attribute vec3 aColor;
-    uniform mat4 uModel;
-    uniform mat4 uView;
-    uniform mat4 uProjection;
-    varying vec3 vColor;
-    void main() {
-        gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
-        // vColor = aColor;
-    }
-    `;
+  attribute vec3 aPosition;   // Sebelumnya vec2, makanya tidak tergambar kubus :D
+  attribute vec3 aColor;
+  attribute vec3 aNormal;
+  uniform mat4 uModel;
+  uniform mat4 uView;
+  uniform mat4 uProjection;
+  varying vec3 vPosition;
+  varying vec3 vColor;
+  varying vec3 vNormal;
+  void main() {
+      gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+      vColor = aColor;
+      vNormal = aNormal;
+      vPosition = (uModel * vec4(aPosition, 1.0)).xyz;
+  }
+  `;
   var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vertexShaderObject, vertexShaderCode);
   gl.compileShader(vertexShaderObject); // sampai sini sudah jadi .o
 
   // Fragment shader
   var fragmentShaderCode = `
-    precision mediump float;
-    varying vec3 vColor;
-    void main() {
-        gl_FragColor = vec4(vColor, 1.0);
-    }
-    `;
+  precision mediump float;
+  varying vec3 vColor;
+  uniform vec3 uLightConstant;        // merepresentasikan warna sumber cahaya
+  uniform float uAmbientIntensity;    // merepresentasikan intensitas cahaya sekitar
+  varying vec3 vNormal;
+  varying vec3 vPosition;             // titik fragmen
+  uniform vec3 uLightPosition;        // titik lokasi sumber cahaya
+  uniform vec3 uViewerPosition;       // titik lokasi mata atau kamera pengamat
+  uniform mat3 uNormalModel;
+  void main() {
+      vec3 ambient = uLightConstant * uAmbientIntensity;
+      vec3 lightRay = vPosition - uLightPosition;
+      vec3 normalizedLight = normalize(-lightRay);
+      vec3 normalizedNormal = normalize(uNormalModel * vNormal);
+      float cosTheta = dot(normalizedNormal, normalizedLight);
+      vec3 diffuse = vec3(0.0, 0.0, 0.0);
+      if (cosTheta > 0.0) {
+          float diffuseIntensity = cosTheta;
+          diffuse = uLightConstant * diffuseIntensity;
+      }
+      vec3 normalizedReflector = normalize(reflect(lightRay, normalizedNormal));
+      vec3 normalizedViewer = normalize(uViewerPosition - vPosition);
+      float cosPhi = dot(normalizedReflector, normalizedViewer);
+      vec3 specular = vec3(0.0, 0.0, 0.0);
+      if (cosPhi > 0.0) {
+          float shininessConstant = 100.0;    // batas minimum spesifikasi spekular untuk materi logam
+          float specularIntensity = pow(cosPhi, shininessConstant);
+          specular = uLightConstant * specularIntensity;
+      }
+      vec3 phong = ambient + diffuse + specular;
+      gl_FragColor = vec4(phong * vColor, 1.0);
+  }
+  `;
   var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
   gl.shaderSource(fragmentShaderObject, fragmentShaderCode);
   gl.compileShader(fragmentShaderObject); // sampai sini sudah jadi .o
@@ -843,14 +630,15 @@ function main() {
   // Variabel pointer ke GLSL
   var uModel = gl.getUniformLocation(shaderProgram, "uModel");
   // View
-  var cameraX = 0.0;
-  var cameraZ = 5.0;
+  // var cameraX = 0.0;
+  // var cameraZ = 5.0;
+  var camera = [0.0, 0.0, 5.0];
   var uView = gl.getUniformLocation(shaderProgram, "uView");
   var view = glMatrix.mat4.create();
   glMatrix.mat4.lookAt(
     view,
-    [cameraX, 0.0, cameraZ], // the location of the eye or the camera
-    [cameraX, 0.0, -10], // the point where the camera look at
+    camera, // lokasi mata atau kamera pengamat
+    [camera[0], 0.0, -10.0], // titik ke mana kamera mengamat
     [0.0, 1.0, 0.0]
   );
   // Projection
@@ -862,11 +650,25 @@ function main() {
   //  nilai posisi dari ARRAY_BUFFER
   //  untuk setiap verteks yang sedang diproses
   var aPosition = gl.getAttribLocation(shaderProgram, "aPosition");
-  gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+  gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 0);
   gl.enableVertexAttribArray(aPosition);
   var aColor = gl.getAttribLocation(shaderProgram, "aColor");
-  gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+  gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   gl.enableVertexAttribArray(aColor);
+  var aNormal = gl.getAttribLocation(shaderProgram, "aNormal");
+  gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
+  gl.enableVertexAttribArray(aNormal);
+
+  // Untuk pencahayaan dan pembayangan
+  var uLightConstant = gl.getUniformLocation(shaderProgram, "uLightConstant");
+  var uAmbientIntensity = gl.getUniformLocation(shaderProgram, "uAmbientIntensity");
+  gl.uniform3fv(uLightConstant, [1.0, 1.0, 1.0]); // warna sumber cahaya: oranye
+  gl.uniform1f(uAmbientIntensity, 0.4); // intensitas cahaya: 40%
+  var uLightPosition = gl.getUniformLocation(shaderProgram, "uLightPosition");
+  gl.uniform3fv(uLightPosition, [2.0, 0.0, 0.0]);
+  var uNormalModel = gl.getUniformLocation(shaderProgram, "uNormalModel");
+  var uViewerPosition = gl.getUniformLocation(shaderProgram, "uViewerPosition");
+  gl.uniform3fv(uViewerPosition, camera);
 
   // Grafika interaktif
   // Tetikus
@@ -876,7 +678,6 @@ function main() {
   document.addEventListener("click", onMouseClick);
   // Papan ketuk
   function onKeydown(event) {
-    if (event.keyCode == 32) freeze = !freeze; // spasi
     // Gerakan horizontal: a ke kiri, d ke kanan
     if (event.keyCode == 65) {
       // a
@@ -893,22 +694,44 @@ function main() {
       // s
       verticalSpeed = 0.01;
     }
+    // Pergerakan kamera berdasarkan panah pada papan ketuk
+    // Horizontal
+    if (event.keyCode == 37) {
+      // kiri
+      camera[0] -= 0.1;
+    } else if (event.keyCode == 39) {
+      // kanan
+      camera[0] += 0.1;
+    }
+    // Vertikal
+    if (event.keyCode == 38) {
+      // atas
+      camera[1] -= 0.1;
+    } else if (event.keyCode == 40) {
+      // bawah
+      camera[1] += 0.1;
+    }
+    gl.uniform3fv(uViewerPosition, camera);
+    glMatrix.mat4.lookAt(view, camera, [camera[0], camera[1], -10.0], [0.0, 1.0, 0.0]);
   }
   function onKeyup(event) {
-    if (event.keyCode == 32) freeze = !freeze;
     if (event.keyCode == 65 || event.keyCode == 68) horizontalSpeed = 0.0;
     if (event.keyCode == 87 || event.keyCode == 83) verticalSpeed = 0.0;
   }
+  function onKeypress(event) {
+    if (event.keyCode == 32) freeze = !freeze;
+  }
   document.addEventListener("keydown", onKeydown);
   document.addEventListener("keyup", onKeyup);
+  document.addEventListener("keypress", onKeypress);
 
   function render() {
     gl.enable(gl.DEPTH_TEST);
-    // gl.clearColor(1.0, 0.65, 0.0, 1.0); // Oranye
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Hitam
     //            Merah     Hijau   Biru    Transparansi
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     if (!freeze) {
-      theta += 0.1;
+      theta += 0.01;
     }
     horizontalDelta += horizontalSpeed;
     verticalDelta -= verticalSpeed;
@@ -920,6 +743,9 @@ function main() {
     gl.uniformMatrix4fv(uModel, false, model);
     gl.uniformMatrix4fv(uView, false, view);
     gl.uniformMatrix4fv(uProjection, false, perspective);
+    var normalModel = glMatrix.mat3.create();
+    glMatrix.mat3.normalFromMat4(normalModel, model);
+    gl.uniformMatrix3fv(uNormalModel, false, normalModel);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     requestAnimationFrame(render);
   }
